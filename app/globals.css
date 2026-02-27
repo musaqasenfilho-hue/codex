@@ -3,31 +3,83 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+  --border: #dbe5ef;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --focus: #0284c7;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  min-height: 100vh;
+  color: var(--text-primary);
+  font-family: "Public Sans", "Avenir Next", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(14, 165, 233, 0.12), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgba(99, 102, 241, 0.1), transparent 35%),
+    linear-gradient(180deg, #f8fbff 0%, #f5f8fc 100%);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Sora", "Avenir Next", "Segoe UI", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: rgba(14, 165, 233, 0.25);
+}
+
+@layer components {
+  .card-surface {
+    @apply rounded-2xl border border-slate-200/90 bg-white/85 shadow-sm backdrop-blur;
+  }
+
+  .card-animate {
+    animation: card-enter 0.45s ease both;
+  }
+
+  .input-control {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition;
+  }
+
+  .input-control::placeholder {
+    @apply text-slate-400;
+  }
+
+  .input-control:focus {
+    border-color: var(--focus);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
+  }
+
+  .field-error {
+    @apply text-xs font-medium text-rose-600;
+  }
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
