@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { CloudExportCenter } from "@/components/cloud-export-center";
 import { DashboardCards } from "@/components/dashboard-cards";
 import { ExpenseForm } from "@/components/expense-form";
 import { ExpenseFiltersPanel } from "@/components/expense-filters";
@@ -12,7 +13,6 @@ import {
   calculateCategoryBreakdown,
   calculateDashboardMetrics,
 } from "@/lib/analytics";
-import { exportExpensesAsCsv } from "@/lib/csv";
 import { filterExpenses, sortExpenses } from "@/lib/expenses";
 import {
   clearExpenseStorage,
@@ -99,6 +99,7 @@ export default function ExpenseTrackerApp(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isCloudExportOpen, setIsCloudExportOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -248,30 +249,6 @@ export default function ExpenseTrackerApp(): JSX.Element {
     }
   }
 
-  function handleExport(): void {
-    if (filteredExpenses.length === 0) {
-      setFeedback({
-        type: "error",
-        message: "No data to export. Add expenses or broaden filters.",
-      });
-      return;
-    }
-
-    try {
-      exportExpensesAsCsv(filteredExpenses);
-      setFeedback({
-        type: "success",
-        message: `Exported ${filteredExpenses.length} expenses to CSV.`,
-      });
-    } catch (exportError) {
-      console.error(exportError);
-      setFeedback({
-        type: "error",
-        message: "CSV export failed.",
-      });
-    }
-  }
-
   function handleClearFilters(): void {
     setFilters(DEFAULT_FILTERS);
   }
@@ -313,11 +290,11 @@ export default function ExpenseTrackerApp(): JSX.Element {
 
             <button
               type="button"
-              onClick={handleExport}
-              disabled={filteredExpenses.length === 0 || isLoading}
+              onClick={() => setIsCloudExportOpen(true)}
+              disabled={isLoading}
               className="rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:bg-sky-300"
             >
-              Export CSV
+              Cloud Export Center
             </button>
           </div>
         </header>
@@ -389,6 +366,13 @@ export default function ExpenseTrackerApp(): JSX.Element {
           </>
         )}
       </main>
+
+      <CloudExportCenter
+        isOpen={isCloudExportOpen}
+        expenses={expenses}
+        onClose={() => setIsCloudExportOpen(false)}
+        onNotify={(nextFeedback) => setFeedback(nextFeedback)}
+      />
     </div>
   );
 }
